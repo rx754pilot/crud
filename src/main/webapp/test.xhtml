@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:pfaces="http://omidbiz.com/ui"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:jedlab="http://java.sun.com/jsf/composite/comp" lang="fa">
+<f:view contentType="text/html" encoding="UTF-8" locale="fa">
+	<c:set var="_ctx" value="#{request.contextPath}" />
+
+	<ui:insert name="metadata" />
+
+	<h:head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title><h:outputText value="#{msgs['Applicatoin_Name']}" /></title>
+
+		
+		  
+		<link rel="stylesheet" href="#{_ctx}/resources/css/w3-blue-grey.css" />
+
+		
+		
+
+ 
+
+
+
+		
+
+		<h:outputScript library="primefaces" name="jquery/jquery.js"
+			target="head" />
+
+		<h:outputScript library="primefaces" name="jquery/jquery-plugins.js"
+			target="head" />
+
+		<script type="text/javascript"
+			src="${_ctx}/resources/js/semantic.min.js" />
+
+		<script type="text/javascript" src="${_ctx}/resources/js/common.js" />
+		
+		
+		
+		<ui:insert name="head" />
+
+	</h:head>
+	<h:body>
+  bb 
+		<h:form id="contractListForm">
+			<p:dataTable var="_item" 
+				value="#{contractQuery.resultList}"
+				paginatorPosition="bottom" 
+				rowsPerPageTemplate="50,100" 
+				
+				sortBy="#{_item.id}"   
+				rowIndexVar="rowId"
+				emptyMessage="#{msgs['Empty_Datatable']}" 
+				paginator="true"
+				rows="50" 
+				id="contractListTable" 
+				lazy="true"
+				sortMode="multiple"   
+				
+				scrollable="true" 
+				scrollWidth="750"
+				frozenColumns="1"				
+				rowKey="#{_item.id}">
+				
+				<f:facet name="header">
+				
+					<div class="row around">
+					    <div class="col col-3">
+					    	<jedlab:exportButtons pdfAction="#{contractQuery.exportAsPdf()}"
+								xlsAction="#{contractQuery.exportAsXls()}" 
+								inlinePdfAction="#{contractQuery.exportAsInlinePdf()}">
+							</jedlab:exportButtons>
+						</div>
+					    <div class="col col-3">
+					    	<p:button href="/secure/contracts/contractsEdit.xhtml" value="#{msgs['Create']}"></p:button>
+					    </div>
+					    <div class="col col-3">
+					    	<p:commandButton id="toggler" type="button" value="#{msgs['Columns']}" style="float:right" icon="ui-icon-calculator" />
+        					<p:columnToggler datasource="contractListTable" trigger="toggler" />
+					    </div>
+					</div>
+					
+					
+					
+					
+				</f:facet>
+				
+				
+				<f:facet name="footer">					
+			       <h:outputText value="#{msgs['Total_Records']}"></h:outputText> #{' '} <h:outputText value=" ( #{contractQuery.resultCount} )"></h:outputText>
+			    </f:facet>
+				
+				
+				
+				<p:column headerText="#{msgs['Contract_No']}" sortBy="#{_item.contractNo}" style="width:25px;">
+					
+					<p:link href="/secure/contracts/contractsView.xhtml?contractId=#{_item.id}" value="#{_item.contractNo}" styleClass="w3-text-blue"  />
+					
+				</p:column>
+				
+			 
+				<p:column headerText="#{msgs['Title']}" style="width:55px;">
+					<p:outputLabel value="#{_item.title}"></p:outputLabel>
+				</p:column>
+				  	  	 	
+				<p:column headerText="#{msgs['Business_Partner']}" style="width:105px;">
+					<p:outputLabel value="#{_item.businessPartner.title}"></p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="#{msgs['Platform']}" >
+					<p:outputLabel value="#{_item.platform.name}"></p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="#{msgs['Contract_Essence']}" style="width:105px;">
+					<p:outputLabel value="#{msgs[_item.contractEssence.label]}"></p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="#{msgs['Contract_Type']}" style="width:105px;" >
+					<p:outputLabel value="#{msgs[_item.contractType.label]}"></p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="#{msgs['Start_Date']} #{msgs['Contract']}" style="width:135px;">
+					<p:outputLabel value="#{_item.startDate}" converter="#{jalaliDateConverter}"></p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="#{msgs['End_Date']} #{msgs['Contract']}" style="width:135px;">
+					<p:outputLabel value="#{_item.endDate}" converter="#{jalaliDateConverter}"></p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="#{msgs['Percent']}" >
+					<p:outputLabel value="#{_item.percent}"></p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="#{msgs['Contract_Responsible']}" >
+					<p:outputLabel value="#{_item.contractResponsible}"></p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="#{msgs['Account_Manager']}" style="width:155px;">
+					<p:outputLabel value="#{_item.accountManager.username}"></p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="#{msgs['Mobile_No']}" style="width:105px;">
+					<p:outputLabel value="#{_item.accountManager.mobileNo}"></p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="#{msgs['Phone_No']}" style="width:105px;">
+					<p:outputLabel value="#{_item.accountManager.phoneNo}"></p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="#{msgs['Agent_Name']}" style="width:105px;">
+					<p:outputLabel value="#{_item.agent.name}"></p:outputLabel>
+				</p:column>
+				
+				
+				
+								
+			</p:dataTable>
+		</h:form>
+	</h:body>
+
+</f:view>
+</html>

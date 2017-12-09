@@ -1,0 +1,75 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/security
+http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<http use-expressions="true">
+		<headers>
+        	<frame-options policy="SAMEORIGIN"/>
+    	</headers>
+		<anonymous key="crud" username="crud"/>
+		<session-management>
+			<concurrency-control max-sessions="1" />
+		</session-management>
+		<intercept-url pattern="/login" access="permitAll" />
+		<!-- <intercept-url pattern="/app/secure/**" access="isFullyAuthenticated()" /> -->
+		<intercept-url pattern="/app/secure/users/**" access="hasRole('ROLE_ADMIN')" />
+		<intercept-url pattern="/app/secure/conf/**" access="hasRole('ROLE_ADMIN')" />
+		<intercept-url pattern="/app/secure/track/**" access="hasRole('ROLE_ADMIN')" />
+		<intercept-url pattern="/app/secure/album/**" access="hasRole('ROLE_ADMIN')" />		
+		<intercept-url pattern="/app/secure/platform/**" access="hasRole('ROLE_ADMIN')" />
+		<intercept-url pattern="/app/secure/bp/**" access="hasRole('ROLE_ADMIN') or hasRole('ROLE_AccountManager')" />
+		<intercept-url pattern="/app/secure/contracts/**" access="hasRole('ROLE_ADMIN') or hasRole('ROLE_AccountManager') or hasRole('ROLE_BusinessPartner')" />
+		<intercept-url pattern="/app/secure/service/**" access="hasRole('ROLE_ADMIN') or hasRole('ROLE_AccountManager')" />
+		<intercept-url pattern="/app/secure/sales/**" access="hasRole('ROLE_ADMIN') or hasRole('ROLE_AccountManager')" />
+		<intercept-url pattern="/app/secure/quotation/**" access="hasRole('ROLE_ADMIN') or hasRole('ROLE_AccountManager')" />
+		<intercept-url pattern="/app/secure/reimbursement/**" access="hasRole('ROLE_ADMIN') or hasRole('ROLE_AccountManager')" />
+		<form-login login-page="/app/login"
+			always-use-default-target="false" default-target-url="/app/home"
+			authentication-success-handler-ref="sucHandler"
+			authentication-failure-url="/app/login?login_error=1"
+			login-processing-url="/app/loginProcess" username-parameter="username"
+			password-parameter="password" />
+		<logout logout-url="/app/logout" success-handler-ref="authLogoutHandler" />
+
+		<csrf disabled="true" />
+		<request-cache ref="reqCache" />
+	</http>
+
+	<beans:bean
+		class="org.springframework.security.web.savedrequest.HttpSessionRequestCache"
+		id="reqCache"></beans:bean>
+
+	<authentication-manager erase-credentials="true">
+		 <authentication-provider user-service-ref="udetail">
+			<password-encoder hash="bcrypt"></password-encoder>
+		</authentication-provider> 
+		<!--<authentication-provider>
+			<user-service>
+				<user name="Administrator" authorities="ROLE_ADMIN" password="Aa@123"/>
+				<user name="Nochi" authorities="ROLE_ADMIN" password="Nn@123"/>
+				<user name="Golestan" authorities="ROLE_ADMIN" password="Gg@123"/>
+			</user-service>
+		</authentication-provider>-->
+	</authentication-manager>
+
+	<beans:bean class="com.crud.portal.service.UserDetailService"
+		id="udetail"></beans:bean>
+	<beans:bean class="com.crud.portal.security.AuthSuccessHandler"
+		id="sucHandler">
+		<beans:property name="defaultTargetUrl" value="/app/home"></beans:property>
+		<beans:property name="alwaysUseDefaultTargetUrl" value="false"></beans:property>
+		<beans:property name="targetUrlParameter" value="url"></beans:property>
+	</beans:bean>
+	<beans:bean class="com.crud.portal.security.AuthLogoutSuccessHandler"
+		id="authLogoutHandler">
+		<beans:property name="defaultTargetUrl" value="/app/home"></beans:property>
+		<beans:property name="alwaysUseDefaultTargetUrl" value="true"></beans:property>
+		<beans:property name="targetUrlParameter" value="url"></beans:property>
+		<beans:property name="redirectStrategy">
+			<beans:bean class="com.crud.portal.security.JsfRedirectStrategy"></beans:bean>
+		</beans:property>
+	</beans:bean>
+</beans:beans>
