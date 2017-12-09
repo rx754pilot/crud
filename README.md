@@ -8,6 +8,8 @@ This is a starter project  for following technologies and frameworks :
 * Hibernate
 * ehcache
 * Jersey (REST)
+* Spring security
+* Postgresql
 
 ## Note
 
